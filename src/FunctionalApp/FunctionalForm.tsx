@@ -1,4 +1,6 @@
+import { useState } from "react";
 import { ErrorMessage } from "../ErrorMessage";
+import { TUserInformation } from "../types";
 
 const firstNameErrorMessage = "First name must be at least 2 characters long";
 const lastNameErrorMessage = "Last name must be at least 2 characters long";
@@ -16,7 +18,7 @@ export const FunctionalForm = () => {
       {/* first name input */}
       <div className="input-wrap">
         <label>{"First Name"}:</label>
-        <input placeholder="Bilbo" />
+        <input placeholder="Bilbo" value={firstName} />
       </div>
       <ErrorMessage message={firstNameErrorMessage} show={true} />
 
