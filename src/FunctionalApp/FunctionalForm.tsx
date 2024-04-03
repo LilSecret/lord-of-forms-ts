@@ -35,9 +35,14 @@ export const FunctionalForm = ({ setUserInformation }: TFormProps) => {
       setSingleInputs(updatedObject);
     };
 
-  const onPhoneInputsHandler = (index) => (e) => {
-    const newArray = phoneNumber.map((input) => "not finished");
-  };
+  const onPhoneInputsHandler =
+    (index: number): ChangeEventHandler<HTMLInputElement> =>
+    (e) => {
+      const newPhoneInput = phoneNumber.map((phoneInput, inputIndex) =>
+        inputIndex === index ? e.target.value : phoneInput
+      ) as TPhoneInput;
+      setPhoneNumber(newPhoneInput);
+    };
 
   return (
     <form
