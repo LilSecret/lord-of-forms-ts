@@ -34,14 +34,6 @@ export const FunctionalForm = ({ setUserInformation }: TFormProps) => {
     city: "",
   });
 
-  const singleInputRefs = [
-    useRef<HTMLInputElement | null>(null),
-    useRef<HTMLInputElement | null>(null),
-    useRef<HTMLInputElement | null>(null),
-    useRef<HTMLInputElement | null>(null),
-    useRef<HTMLInputElement | null>(null),
-  ];
-
   const phoneNumberRefs = [
     useRef<HTMLInputElement | null>(null),
     useRef<HTMLInputElement | null>(null),
@@ -49,8 +41,6 @@ export const FunctionalForm = ({ setUserInformation }: TFormProps) => {
     useRef<HTMLInputElement | null>(null),
   ];
 
-  const [refFirstName, refLastName, refEmail, refCity, refPhoneNumber] =
-    singleInputRefs;
   const [input0, input1, input2, input3] = phoneNumberRefs;
 
   const [phoneNumber, setPhoneNumber] = useState<TPhoneInput>(["", "", "", ""]);
@@ -74,44 +64,43 @@ export const FunctionalForm = ({ setUserInformation }: TFormProps) => {
 
   const phoneNumberLengths = [2, 2, 2, 1];
 
-  const errorCheckInput = (input: TErrorCheckInputs) => {
+  const errorCheckAllInputs = () => {
+    const { firstName, lastName, email, city } = singleInputs;
+
+    setIsFormSubmitted(true);
+    setFirstNameError(firstName.length <= 1 ? true : false);
+    setLastNameError(lastName.length <= 1 ? true : false);
+    setEmailError(!isEmailValid(email));
+    setCityError(!allCities.includes(city) ? true : false);
+  };
+
+  const errorCheckInput = (input: TErrorCheckInputs, value: string) => {
     if (isFormSubmitted) {
-      if (input === "firstName" || input === "all") {
-        setFirstNameError(
-          (refFirstName.current?.value.length as number) <= 1 ? true : false
-        );
+      // const { firstName, lastName, email, city } = singleInputs;
+      if (input === "firstName") {
+        setFirstNameError(value.length <= 1 ? true : false);
       }
-      if (input === "lastName" || input === "all") {
-        setLastNameError(
-          (refLastName.current?.value.length as number) <= 1 ? true : false
-        );
+      if (input === "lastName") {
+        setLastNameError(value.length <= 1 ? true : false);
       }
-      if (input === "email" || input === "all") {
-        const emailValue = refEmail.current?.value as string;
-        setEmailError(!isEmailValid(emailValue));
+      if (input === "email") {
+        setEmailError(!isEmailValid(value));
       }
-      if (input === "city" || input === "all") {
-        setCityError(
-          !allCities.includes(refCity.current?.value as string) ? true : false
-        );
+      if (input === "city") {
+        setCityError(!allCities.includes(value) ? true : false);
       }
     }
   };
 
-  const onSingleInputHandler =
-    (
-      property: keyof typeof singleInputs
-    ): ChangeEventHandler<HTMLInputElement> =>
-    (e) => {
-      const updatedObject = { ...singleInputs };
+  const updateStateOnSingleInputs = (
+    property: keyof typeof singleInputs,
+    value: string
+  ) => {
+    const updatedObject = { ...singleInputs };
 
-      if (isFormSubmitted) {
-        errorCheckInput(property);
-      }
-
-      updatedObject[property] = e.target.value;
-      setSingleInputs(updatedObject);
-    };
+    updatedObject[property] = value;
+    setSingleInputs(updatedObject);
+  };
 
   const onPhoneInputsHandler =
     (index: number): ChangeEventHandler<HTMLInputElement> =>
@@ -152,7 +141,7 @@ export const FunctionalForm = ({ setUserInformation }: TFormProps) => {
     <form
       onSubmit={(e) => {
         e.preventDefault();
-        errorCheckInput("all");
+        errorCheckAllInputs();
       }}
     >
       <u>
@@ -164,8 +153,10 @@ export const FunctionalForm = ({ setUserInformation }: TFormProps) => {
         <label>{"First Name"}:</label>
         <input
           placeholder="Bilbo"
-          onChange={onSingleInputHandler("firstName")}
-          ref={refFirstName}
+          onChange={(e) => {
+            updateStateOnSingleInputs("firstName", e.target.value);
+            errorCheckInput("firstName", e.target.value);
+          }}
         />
       </div>
       <ErrorMessage message={firstNameErrorMessage} show={firstNameError} />
@@ -175,8 +166,10 @@ export const FunctionalForm = ({ setUserInformation }: TFormProps) => {
         <label>{"Last Name"}:</label>
         <input
           placeholder="Baggins"
-          onChange={onSingleInputHandler("lastName")}
-          ref={refLastName}
+          onChange={(e) => {
+            updateStateOnSingleInputs("lastName", e.target.value);
+            errorCheckInput("lastName", e.target.value);
+          }}
         />
       </div>
       <ErrorMessage message={lastNameErrorMessage} show={lastNameError} />
@@ -186,8 +179,10 @@ export const FunctionalForm = ({ setUserInformation }: TFormProps) => {
         <label>{"Email"}:</label>
         <input
           placeholder="bilbo-baggins@adventurehobbits.net"
-          onChange={onSingleInputHandler("email")}
-          ref={refEmail}
+          onChange={(e) => {
+            updateStateOnSingleInputs("email", e.target.value);
+            errorCheckInput("email", e.target.value);
+          }}
         />
       </div>
       <ErrorMessage message={emailErrorMessage} show={emailError} />
@@ -198,8 +193,10 @@ export const FunctionalForm = ({ setUserInformation }: TFormProps) => {
         <input
           placeholder="Hobbiton"
           list="cities"
-          onChange={onSingleInputHandler("city")}
-          ref={refCity}
+          onChange={(e) => {
+            updateStateOnSingleInputs("city", e.target.value);
+            errorCheckInput("city", e.target.value);
+          }}
         />
         <datalist id="cities">
           {allCities.map((city) => (
