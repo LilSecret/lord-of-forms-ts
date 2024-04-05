@@ -1,6 +1,6 @@
 import { ChangeEventHandler, useRef, useState } from "react";
 import { ErrorMessage } from "../ErrorMessage";
-import { TUserInformation } from "../types";
+import { TPhoneInput, TUserInformation } from "../types";
 import { isEmailValid } from "../utils/validations";
 import { allCities } from "../utils/all-cities";
 
@@ -16,15 +16,11 @@ type TErrorCheckInputs =
   | "city"
   | "phoneNumber";
 
-type TSingleInputs = "firstName" | "lastName" | "email" | "city";
-
 const firstNameErrorMessage = "First name must be at least 2 characters long";
 const lastNameErrorMessage = "Last name must be at least 2 characters long";
 const emailErrorMessage = "Email is Invalid";
 const cityErrorMessage = "State is Invalid";
 const phoneNumberErrorMessage = "Invalid Phone Number";
-
-type TPhoneInput = [string, string, string, string];
 
 export const FunctionalForm = ({ setUserInformation }: TFormProps) => {
   const [singleInputs, setSingleInputs] = useState({
@@ -46,7 +42,13 @@ export const FunctionalForm = ({ setUserInformation }: TFormProps) => {
   const [phoneNumber, setPhoneNumber] = useState<TPhoneInput>(["", "", "", ""]);
   const [isFormSubmitted, setIsFormSubmitted] = useState(false);
 
-  const errors = [
+  const [
+    [firstNameError, setFirstNameError],
+    [lastNameError, setLastNameError],
+    [emailError, setEmailError],
+    [cityError, setCityError],
+    [phoneNumberError, setPhoneNumberError],
+  ] = [
     useState(false),
     useState(false),
     useState(false),
@@ -54,40 +56,44 @@ export const FunctionalForm = ({ setUserInformation }: TFormProps) => {
     useState(false),
   ];
 
-  const [
-    [firstNameError, setFirstNameError],
-    [lastNameError, setLastNameError],
-    [emailError, setEmailError],
-    [cityError, setCityError],
-    [phoneNumberError, setPhoneNumberError],
-  ] = errors;
-
   const phoneNumberLengths = [2, 2, 2, 1];
 
   const errorCheckAllInputs = () => {
     const { firstName, lastName, email, city } = singleInputs;
+    const inputConditions = [
+      firstName.length <= 1,
+      lastName.length <= 1,
+      !isEmailValid(email),
+      !allCities.includes(city),
+      phoneNumber.join("").length < 7,
+    ];
 
     setIsFormSubmitted(true);
-    setFirstNameError(firstName.length <= 1 ? true : false);
-    setLastNameError(lastName.length <= 1 ? true : false);
-    setEmailError(!isEmailValid(email));
-    setCityError(!allCities.includes(city) ? true : false);
+    setFirstNameError(inputConditions[0]);
+    setLastNameError(inputConditions[1]);
+    setEmailError(inputConditions[2]);
+    setCityError(inputConditions[3]);
+    setPhoneNumberError(inputConditions[4]);
+
+    return !inputConditions.includes(true);
   };
 
   const errorCheckInput = (input: TErrorCheckInputs, value: string) => {
     if (isFormSubmitted) {
-      // const { firstName, lastName, email, city } = singleInputs;
       if (input === "firstName") {
-        setFirstNameError(value.length <= 1 ? true : false);
+        setFirstNameError(value.length <= 1);
       }
       if (input === "lastName") {
-        setLastNameError(value.length <= 1 ? true : false);
+        setLastNameError(value.length <= 1);
       }
       if (input === "email") {
         setEmailError(!isEmailValid(value));
       }
       if (input === "city") {
-        setCityError(!allCities.includes(value) ? true : false);
+        setCityError(!allCities.includes(value));
+      }
+      if (input === "phoneNumber") {
+        setPhoneNumberError(phoneNumber.join("").length < 7);
       }
     }
   };
@@ -108,14 +114,15 @@ export const FunctionalForm = ({ setUserInformation }: TFormProps) => {
       const currentInputVal = phoneNumberRefs[index];
       const nextInputVal = phoneNumberRefs[index + 1];
       const prevInputVal = phoneNumberRefs[index - 1];
+
       const value = e.target.value;
       const newPhoneInput = phoneNumber.map((phoneInput, inputIndex) =>
         inputIndex === index ? value : phoneInput
       ) as TPhoneInput;
 
       const shouldGoNext =
-        (currentInputVal.current?.value.length as number) ===
-          phoneNumberLengths[index] && nextInputVal
+        currentInputVal.current?.value.length === phoneNumberLengths[index] &&
+        nextInputVal
           ? true
           : false;
 
@@ -124,8 +131,15 @@ export const FunctionalForm = ({ setUserInformation }: TFormProps) => {
           ? true
           : false;
 
-      if (!isNaN(value)) {
+      if (
+        !isNaN(parseFloat(value)) &&
+        value.length <= phoneNumberLengths[index]
+      ) {
         setPhoneNumber(newPhoneInput);
+      }
+
+      if (isFormSubmitted) {
+        errorCheckInput("phoneNumber", "null");
       }
 
       if (shouldGoNext) {
@@ -141,7 +155,13 @@ export const FunctionalForm = ({ setUserInformation }: TFormProps) => {
     <form
       onSubmit={(e) => {
         e.preventDefault();
-        errorCheckAllInputs();
+        if (errorCheckAllInputs()) {
+          const validUserInformation = {
+            ...singleInputs,
+            phone: phoneNumber.join(""),
+          };
+          setUserInformation(validUserInformation);
+        }
       }}
     >
       <u>
