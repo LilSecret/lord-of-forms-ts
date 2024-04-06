@@ -111,8 +111,8 @@ export const FunctionalForm = ({ setUserInformation }: TFormProps) => {
     setSingleInputs(updatedObject);
   };
 
-  const updateUserInformation = (boolean: boolean) => {
-    if (boolean) {
+  const updateUserInformation = (errors: boolean) => {
+    if (!errors) {
       const validUserInformation = {
         ...singleInputs,
         phone: phoneNumber.join(""),

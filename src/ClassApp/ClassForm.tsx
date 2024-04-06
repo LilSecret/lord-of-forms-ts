@@ -148,8 +148,8 @@ export class ClassForm extends Component<TProps> {
     }
   };
 
-  updateUserInformation = (boolean: boolean) => {
-    if (boolean) {
+  updateUserInformation = (errors: boolean) => {
+    if (!errors) {
       const validUserInformation = {
         ...this.state.singleInputs,
         phone: this.state.phoneNumber.join(""),
