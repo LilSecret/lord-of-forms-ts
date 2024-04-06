@@ -111,6 +111,7 @@ export const FunctionalForm = ({ setUserInformation }: TFormProps) => {
   const onPhoneInputsHandler =
     (index: number): ChangeEventHandler<HTMLInputElement> =>
     (e) => {
+      const regex = /[^0-9\s]/;
       const currentInputVal = phoneNumberRefs[index];
       const nextInputVal = phoneNumberRefs[index + 1];
       const prevInputVal = phoneNumberRefs[index - 1];
@@ -131,10 +132,7 @@ export const FunctionalForm = ({ setUserInformation }: TFormProps) => {
           ? true
           : false;
 
-      if (
-        !isNaN(parseFloat(value)) &&
-        value.length <= phoneNumberLengths[index]
-      ) {
+      if (!regex.test(value)) {
         setPhoneNumber(newPhoneInput);
       }
 
@@ -236,6 +234,7 @@ export const FunctionalForm = ({ setUserInformation }: TFormProps) => {
             value={phoneNumber[0]}
             ref={input0}
             onChange={onPhoneInputsHandler(0)}
+            maxLength={phoneNumberLengths[0]}
           />
           -
           <input
@@ -245,6 +244,7 @@ export const FunctionalForm = ({ setUserInformation }: TFormProps) => {
             value={phoneNumber[1]}
             ref={input1}
             onChange={onPhoneInputsHandler(1)}
+            maxLength={phoneNumberLengths[1]}
           />
           -
           <input
@@ -254,6 +254,7 @@ export const FunctionalForm = ({ setUserInformation }: TFormProps) => {
             value={phoneNumber[2]}
             ref={input2}
             onChange={onPhoneInputsHandler(2)}
+            maxLength={phoneNumberLengths[2]}
           />
           -
           <input
@@ -263,6 +264,7 @@ export const FunctionalForm = ({ setUserInformation }: TFormProps) => {
             value={phoneNumber[3]}
             ref={input3}
             onChange={onPhoneInputsHandler(3)}
+            maxLength={phoneNumberLengths[3]}
           />
         </div>
       </div>
