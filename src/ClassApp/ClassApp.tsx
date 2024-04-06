@@ -1,10 +1,9 @@
 import { Component } from "react";
 import { ClassForm } from "./ClassForm";
-import { UserInformation } from "../types";
+import { TUserInformation } from "../types";
 import { ProfileInformation } from "../ProfileInformation";
-type State = { userInformation: UserInformation | null };
 
-const defaultUser: UserInformation = {
+const defaultUser: TUserInformation = {
   email: "default@default.com",
   firstName: "Default",
   lastName: "Default",
@@ -12,19 +11,23 @@ const defaultUser: UserInformation = {
   city: "Hobbiton",
 };
 
-export class ClassApp extends Component<Record<string, never>, State> {
+type TState = { userInformation: TUserInformation | null };
+
+export class ClassApp extends Component<Record<string, never>, TState> {
+  state = {
+    userInformation: null,
+  };
+
+  setUserInformation = (userInfo: TUserInformation) => {
+    this.setState({ userInformation: userInfo });
+  };
+
   render() {
     return (
       <>
         <h2>Class</h2>
-        <ProfileInformation
-          userData={
-            // toggle the following lines to change
-            // null
-            defaultUser
-          }
-        />
-        <ClassForm />
+        <ProfileInformation userData={defaultUser} />
+        <ClassForm setUserInformation={this.setUserInformation} />
       </>
     );
   }
