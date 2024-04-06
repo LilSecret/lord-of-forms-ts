@@ -96,7 +96,11 @@ export const FunctionalForm = ({ setUserInformation }: TFormProps) => {
         setCityError(!allCities.includes(value));
       }
       if (input === "phoneNumber") {
-        setPhoneNumberError(phoneNumber.join("").length < 7);
+        let phoneNumberLength = 0;
+        phoneNumberRefs.forEach((inputRef) => {
+          phoneNumberLength += Number(inputRef.current?.value.length);
+        });
+        setPhoneNumberError(phoneNumberLength < 7);
       }
     }
   };

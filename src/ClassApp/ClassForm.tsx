@@ -113,12 +113,18 @@ export class ClassForm extends Component<TProps> {
       !allCities.includes(city),
       phoneNumber.join("").length < 7,
     ];
+    let phoneNumberLength = 0;
+
+    this.phoneNumberRefs.forEach((inputRef) => {
+      phoneNumberLength += Number(inputRef.current?.value.length);
+    });
 
     this.setState({ setIsFormSubmitted: true });
     this.setState({ firstNameError: inputConditions[0] });
     this.setState({ lastNameError: inputConditions[1] });
     this.setState({ emailError: inputConditions[2] });
     this.setState({ cityError: inputConditions[3] });
+    this.setState({ phoneNumberError: phoneNumberLength < 7 });
 
     if (inputConditions.includes(true)) {
       alert("You have entered a bad form");
@@ -129,7 +135,6 @@ export class ClassForm extends Component<TProps> {
 
   errorCheckInput = (input: TErrorCheckInputs, value: string) => {
     if (this.state.isFormSubmitted) {
-      const { phoneNumber } = this.state;
       if (input === "firstName") {
         this.setState({ firstNameError: value.length <= 1 });
       }
@@ -142,9 +147,13 @@ export class ClassForm extends Component<TProps> {
       if (input === "city") {
         this.setState({ cityError: !allCities.includes(value) });
       }
-      // if (input === "phoneNumber") {
-      //   this.setState({phoneNumberError: phoneNumber.join("").length < 7});
-      // }
+      if (input === "phoneNumber") {
+        let phoneNumberLength = 0;
+        this.phoneNumberRefs.forEach((inputRef) => {
+          phoneNumberLength += Number(inputRef.current?.value.length);
+        });
+        this.setState({ phoneNumberError: phoneNumberLength < 7 });
+      }
     }
   };
 
