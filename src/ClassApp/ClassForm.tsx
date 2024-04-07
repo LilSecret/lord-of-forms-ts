@@ -128,9 +128,9 @@ export class ClassForm extends Component<TProps> {
 
     if (inputConditions.includes(true)) {
       alert("You have entered a bad form");
-      return true;
+      return false;
     }
-    return false;
+    return true;
   };
 
   errorCheckInput = (input: TErrorCheckInputs, value: string) => {
@@ -157,8 +157,8 @@ export class ClassForm extends Component<TProps> {
     }
   };
 
-  updateUserInformation = (errors: boolean) => {
-    if (!errors) {
+  updateUserInformation = (noErrorsCaught: boolean) => {
+    if (noErrorsCaught) {
       const validUserInformation = {
         ...this.state.singleInputs,
         phone: this.state.phoneNumber.join(""),
@@ -181,8 +181,8 @@ export class ClassForm extends Component<TProps> {
         onSubmit={(e) => {
           e.preventDefault();
           this.setState({ isFormSubmitted: true });
-          const caughtErrors = this.errorCheckAllInputs();
-          this.updateUserInformation(caughtErrors);
+          const noErrors = this.errorCheckAllInputs();
+          this.updateUserInformation(noErrors);
         }}
       >
         <u>

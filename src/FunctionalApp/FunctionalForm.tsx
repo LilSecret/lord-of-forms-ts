@@ -76,9 +76,9 @@ export const FunctionalForm = ({ setUserInformation }: TFormProps) => {
 
     if (inputConditions.includes(true)) {
       alert("You have entered a bad form");
-      return true;
+      return false;
     }
-    return false;
+    return true;
   };
 
   const errorCheckInput = (input: TErrorCheckInputs, value: string) => {
@@ -115,8 +115,8 @@ export const FunctionalForm = ({ setUserInformation }: TFormProps) => {
     setSingleInputs(updatedObject);
   };
 
-  const updateUserInformation = (errors: boolean) => {
-    if (!errors) {
+  const updateUserInformation = (noCaughtErrors: boolean) => {
+    if (noCaughtErrors) {
       const validUserInformation = {
         ...singleInputs,
         phone: phoneNumber.join(""),
@@ -170,8 +170,8 @@ export const FunctionalForm = ({ setUserInformation }: TFormProps) => {
     <form
       onSubmit={(e) => {
         e.preventDefault();
-        const caughtErrors = errorCheckAllInputs();
-        updateUserInformation(caughtErrors);
+        const noErrors = errorCheckAllInputs();
+        updateUserInformation(noErrors);
       }}
     >
       <u>
