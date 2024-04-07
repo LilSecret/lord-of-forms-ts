@@ -113,18 +113,13 @@ export class ClassForm extends Component<TProps> {
       !allCities.includes(city),
       phoneNumber.join("").length < 7,
     ];
-    let phoneNumberLength = 0;
-
-    this.phoneNumberRefs.forEach((inputRef) => {
-      phoneNumberLength += Number(inputRef.current?.value.length);
-    });
 
     this.setState({ setIsFormSubmitted: true });
     this.setState({ firstNameError: inputConditions[0] });
     this.setState({ lastNameError: inputConditions[1] });
     this.setState({ emailError: inputConditions[2] });
     this.setState({ cityError: inputConditions[3] });
-    this.setState({ phoneNumberError: phoneNumberLength < 7 });
+    this.setState({ phoneNumberError: inputConditions[4] });
 
     if (inputConditions.includes(true)) {
       alert("You have entered a bad form");
