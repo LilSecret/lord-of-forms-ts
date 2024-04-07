@@ -149,7 +149,7 @@ export class ClassForm extends Component<TProps, TState> {
         this.setState({ emailError: !isEmailValid(value) });
       }
       if (input === "city") {
-        this.setState({ cityError: !allCities.includes(value) });
+        this.setState({ cityError: !isValidCity(value) });
       }
       if (input === "phone") {
         let phoneNumberLength = 0;

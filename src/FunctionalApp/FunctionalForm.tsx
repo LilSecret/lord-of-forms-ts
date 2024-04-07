@@ -53,7 +53,7 @@ export const FunctionalForm = ({ setUserInformation }: TFormProps) => {
       firstName.length <= 1,
       lastName.length <= 1,
       !isEmailValid(email),
-      !allCities.includes(city),
+      !isValidCity(city),
       phoneNumber.join("").length < 7,
     ];
 
