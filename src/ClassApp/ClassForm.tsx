@@ -4,6 +4,7 @@ import { TPhoneInput, TUserInformation, TInput } from "../types";
 import { isEmailValid, isPhoneNumber, isValidCity } from "../utils/validations";
 import { allCities } from "../utils/all-cities";
 import ClassPhoneInput from "./ClassPhoneInput";
+import ClassTextInput from "./ClassTextInput";
 
 type TProps = {
   setUserInformation: (userInfo: TUserInformation) => void;
@@ -204,57 +205,65 @@ export class ClassForm extends Component<TProps, TState> {
 
         {/* first name input */}
         <div className="input-wrap">
-          <label>{"First Name"}:</label>
-          <input
-            placeholder="Bilbo"
-            onChange={(e) => {
-              this.updateStateOnSingleInputs("firstName", e.target.value);
-              this.errorCheckInput("firstName", e.target.value);
+          <ClassTextInput
+            label="First Name"
+            inputProps={{
+              onChange: (e) => {
+                this.updateStateOnSingleInputs("firstName", e.target.value);
+                this.errorCheckInput("firstName", e.target.value);
+              },
+              placeholder: "Bilbo",
+              value: firstName,
             }}
-            value={firstName}
           />
         </div>
         <ErrorMessage message={firstNameErrorMessage} show={firstNameError} />
 
         {/* last name input */}
         <div className="input-wrap">
-          <label>{"Last Name"}:</label>
-          <input
-            placeholder="Baggins"
-            onChange={(e) => {
-              this.updateStateOnSingleInputs("lastName", e.target.value);
-              this.errorCheckInput("lastName", e.target.value);
+          <ClassTextInput
+            label="Last Name"
+            inputProps={{
+              onChange: (e) => {
+                this.updateStateOnSingleInputs("lastName", e.target.value);
+                this.errorCheckInput("lastName", e.target.value);
+              },
+              placeholder: "Baggins",
+              value: lastName,
             }}
-            value={lastName}
           />
         </div>
         <ErrorMessage message={lastNameErrorMessage} show={lastNameError} />
 
         {/* Email Input */}
         <div className="input-wrap">
-          <label>{"Email"}:</label>
-          <input
-            placeholder="bilbo-baggins@adventurehobbits.net"
-            onChange={(e) => {
-              this.updateStateOnSingleInputs("email", e.target.value);
-              this.errorCheckInput("email", e.target.value);
+          <ClassTextInput
+            label="Email"
+            inputProps={{
+              onChange: (e) => {
+                this.updateStateOnSingleInputs("email", e.target.value);
+                this.errorCheckInput("email", e.target.value);
+              },
+              placeholder: "bilbo@hobbiton-adventures.com",
+              value: email,
             }}
-            value={email}
           />
         </div>
         <ErrorMessage message={emailErrorMessage} show={emailError} />
 
         {/* City Input */}
         <div className="input-wrap">
-          <label>{"City"}:</label>
-          <input
-            placeholder="Hobbiton"
-            list="cities"
-            onChange={(e) => {
-              this.updateStateOnSingleInputs("city", e.target.value);
-              this.errorCheckInput("city", e.target.value);
+          <ClassTextInput
+            label="City"
+            inputProps={{
+              onChange: (e) => {
+                this.updateStateOnSingleInputs("city", e.target.value);
+                this.errorCheckInput("city", e.target.value);
+              },
+              placeholder: "Hobbiton",
+              list: "cities",
+              value: city,
             }}
-            value={city}
           />
           <datalist id="cities">
             {allCities.map((city) => (
@@ -271,7 +280,6 @@ export class ClassForm extends Component<TProps, TState> {
             onPhoneInputsHandler={this.onPhoneInputsHandler}
           />
         </div>
-
         <ErrorMessage
           message={phoneNumberErrorMessage}
           show={phoneNumberError}
