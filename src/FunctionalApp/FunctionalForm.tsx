@@ -1,7 +1,7 @@
 import { ChangeEventHandler, useRef, useState } from "react";
 import { ErrorMessage } from "../ErrorMessage";
 import { TInput, TPhoneInput, TUserInformation } from "../types";
-import { isEmailValid, isPhoneNumber } from "../utils/validations";
+import { isEmailValid, isPhoneNumber, isValidCity } from "../utils/validations";
 import { allCities } from "../utils/all-cities";
 import { FunctionalPhoneInput } from "./FunctionalPhoneInput";
 
@@ -83,7 +83,7 @@ export const FunctionalForm = ({ setUserInformation }: TFormProps) => {
         setEmailError(!isEmailValid(value));
       }
       if (input === "city") {
-        setCityError(!allCities.includes(value));
+        setCityError(!isValidCity(value));
       }
       if (input === "phone") {
         let phoneNumberLength = 0;

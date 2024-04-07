@@ -1,7 +1,7 @@
 import { ChangeEventHandler, Component, createRef } from "react";
 import { ErrorMessage } from "../ErrorMessage";
 import { TPhoneInput, TUserInformation, TInput } from "../types";
-import { isEmailValid, isPhoneNumber } from "../utils/validations";
+import { isEmailValid, isPhoneNumber, isValidCity } from "../utils/validations";
 import { allCities } from "../utils/all-cities";
 import ClassPhoneInput from "./ClassPhoneInput";
 
@@ -119,7 +119,7 @@ export class ClassForm extends Component<TProps, TState> {
       firstName.length <= 1,
       lastName.length <= 1,
       !isEmailValid(email),
-      !allCities.includes(city),
+      !isValidCity(city),
       phoneNumber.join("").length < 7,
     ];
 
