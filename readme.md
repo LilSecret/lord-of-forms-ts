@@ -40,28 +40,28 @@ To get this project setup, you should:
 
 ## Standard Requirements
 
-- [ ] Setup eslint
-- [ ] Pass all linting checks
+- [x] Setup eslint
+- [x] Pass all linting checks
 
 - To check if linting passes, run `npm run lint`
 
-- [ ] Format code with prettier
-- [ ] State should not be duplicated
-- [ ] Variables should be named logically
-- [ ] No unnecessary console logs
-- [ ] No commented out blocks of code (Code comments are fine)
-- [ ] Setup a github repository with your submission as the `main` branch, you will submit a link to this for grading (NOT A ZIP FILE)
+- [x] Format code with prettier
+- [x] State should not be duplicated
+- [x] Variables should be named logically
+- [x] No unnecessary console logs
+- [x] No commented out blocks of code (Code comments are fine)
+- [x] Setup a github repository with your submission as the `main` branch, you will submit a link to this for grading (NOT A ZIP FILE)
 
 ## Typescript Specific Requirements
 
-- [ ] pass **ALL** type-checks
+- [x] pass **ALL** type-checks
   - Check by running `npm run typecheck`
-- [ ] DON'T USE `any`.... OR ELSE
-- [ ] Keep your types clean and in a logical location
-- [ ] Prop Types for components should be collocated with their components
-- [ ] Shared types should live in a file that says `types` somewhere in it's name
-  - [ ] example: `types.ts` should work fine
-- [ ] Unshared types should live in the component they are used in
+- [x] DON'T USE `any`.... OR ELSE
+- [x] Keep your types clean and in a logical location
+- [x] Prop Types for components should be collocated with their components
+- [x] Shared types should live in a file that says `types` somewhere in it's name
+  - [x] example: `types.ts` should work fine
+- [x] Unshared types should live in the component they are used in
 
 ## Assignment Specific Requirements
 
@@ -69,26 +69,26 @@ Example Template:
 
 My recommendation is read through all the requirements once, then focus more on matching 👇 that UI. Then at the end use the checklist to make sure that you covered all of the UI and requirements, this checklist should make more sense as you start coding.
 
-- [ ] Get your code to function EXACTLY like [This Site](https://lord-of-the-forms.vercel.app/)
+- [x] Get your code to function EXACTLY like [This Site](https://lord-of-the-forms.vercel.app/)
 
 Validation UI
 
-- [ ] Under input errors should not show UNLESS the user has already tried submitting once
-- [ ] Errors should go away as soon as the field is fixed, not on submit
-- [ ] If a user tries to submit a form with bad inputs, an alert message will say "Bad Inputs" then the exact errors will pop up under the incorrect inputs
-- [ ] When a user successfully submits the form, it should update the userInformation and show the user information in the ProfileInformation Component
-- [ ] First Name should be at least 2 characters long and should not contain numbers
-- [ ] Last Name should be at least 2 characters long and should not contain numbers
-- [ ] Email should pass the `isEmailValid` function
-- [ ] City should be valid according to the `City Information` section below
-  - [ ] You should have a `isCityValid` function located in `validations.ts` that returns true or false depending on the input
-- [ ] Phone number should be 7 characters long, and every characters should be a number 0-9
-  - [ ] You should have a `isPhoneValid` function located in `validations.ts` that returns true or false depending on the input
+- [x] Under input errors should not show UNLESS the user has already tried submitting once
+- [x] Errors should go away as soon as the field is fixed, not on submit
+- [x] If a user tries to submit a form with bad inputs, an alert message will say "Bad Inputs" then the exact errors will pop up under the incorrect inputs
+- [x] When a user successfully submits the form, it should update the userInformation and show the user information in the ProfileInformation Component
+- [x] First Name should be at least 2 characters long and should not contain numbers
+- [x] Last Name should be at least 2 characters long and should not contain numbers
+- [x] Email should pass the `isEmailValid` function
+- [x] City should be valid according to the `City Information` section below
+- [x] You should have a `isCityValid` function located in `validations.ts` that returns true or false depending on the input
+- [x] Phone number should be 7 characters long, and every characters should be a number 0-9
+- [x] You should have a `isPhoneValid` function located in `validations.ts` that returns true or false depending on the input
 
 Phone Number UI
 
-- [ ] When you store a phone number in state it should NOT have all the `-` characters in what you are storing
-- [ ] Display a phone number with the format `NN-NN-NN-N`
+- [x] When you store a phone number in state it should NOT have all the `-` characters in what you are storing
+- [x] Display a phone number with the format `NN-NN-NN-N`
   - use this function in your `ProfileInformation` component to render the correct thing to the screen
 
 Phone Input
@@ -103,7 +103,7 @@ Phone Input
 
 City Information
 
-- [ ] A valid city should be in the list of `allCites` found in `all-cities.ts`
+- [x] A valid city should be in the list of `allCites` found in `all-cities.ts`
 - [ ] A valid city does NOT have to be the same casing,"Hobbiton" or "hobbiton" should pass validation
 - [ ] Make a `isValidCity` function that checks to see if an input is a valid city
 

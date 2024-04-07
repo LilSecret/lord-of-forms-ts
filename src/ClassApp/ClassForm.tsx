@@ -3,9 +3,26 @@ import { ErrorMessage } from "../ErrorMessage";
 import { TPhoneInput, TUserInformation, TInput } from "../types";
 import { isEmailValid, isPhoneNumber } from "../utils/validations";
 import { allCities } from "../utils/all-cities";
+import ClassPhoneInput from "./ClassPhoneInput";
 
 type TProps = {
   setUserInformation: (userInfo: TUserInformation) => void;
+};
+
+type TState = {
+  singleInputs: {
+    firstName: string;
+    lastName: string;
+    email: string;
+    city: string;
+  };
+  phoneNumber: TPhoneInput;
+  isFormSubmitted: boolean;
+  firstNameError: boolean;
+  lastNameError: boolean;
+  emailError: boolean;
+  cityError: boolean;
+  phoneNumberError: boolean;
 };
 
 const firstNameErrorMessage = "First name must be at least 2 characters long";
@@ -14,8 +31,8 @@ const emailErrorMessage = "Email is Invalid";
 const cityErrorMessage = "State is Invalid";
 const phoneNumberErrorMessage = "Invalid Phone Number";
 
-export class ClassForm extends Component<TProps> {
-  state = {
+export class ClassForm extends Component<TProps, TState> {
+  state: TState = {
     singleInputs: {
       firstName: "",
       lastName: "",
@@ -106,7 +123,7 @@ export class ClassForm extends Component<TProps> {
       phoneNumber.join("").length < 7,
     ];
 
-    this.setState({ setIsFormSubmitted: true });
+    this.setState({ isFormSubmitted: true });
     this.setState({ firstNameError: inputConditions[0] });
     this.setState({ lastNameError: inputConditions[1] });
     this.setState({ emailError: inputConditions[2] });
@@ -248,48 +265,11 @@ export class ClassForm extends Component<TProps> {
         <ErrorMessage message={cityErrorMessage} show={cityError} />
 
         <div className="input-wrap">
-          <label htmlFor="phone">Phone:</label>
-          <div id="phone-input-wrap">
-            <input
-              type="text"
-              id="phone-input-1"
-              placeholder="55"
-              value={this.state.phoneNumber[0]}
-              ref={this.inputRef0}
-              onChange={this.onPhoneInputsHandler(0)}
-              maxLength={this.phoneNumberLengths[0]}
-            />
-            -
-            <input
-              type="text"
-              id="phone-input-2"
-              placeholder="55"
-              value={this.state.phoneNumber[1]}
-              ref={this.inputRef1}
-              onChange={this.onPhoneInputsHandler(1)}
-              maxLength={this.phoneNumberLengths[1]}
-            />
-            -
-            <input
-              type="text"
-              id="phone-input-3"
-              placeholder="55"
-              value={this.state.phoneNumber[2]}
-              ref={this.inputRef2}
-              onChange={this.onPhoneInputsHandler(2)}
-              maxLength={this.phoneNumberLengths[2]}
-            />
-            -
-            <input
-              type="text"
-              id="phone-input-4"
-              placeholder="5"
-              value={this.state.phoneNumber[3]}
-              ref={this.inputRef3}
-              onChange={this.onPhoneInputsHandler(3)}
-              maxLength={this.phoneNumberLengths[3]}
-            />
-          </div>
+          <ClassPhoneInput
+            phoneNumber={this.state.phoneNumber}
+            phoneNumberRefs={this.phoneNumberRefs}
+            onPhoneInputsHandler={this.onPhoneInputsHandler}
+          />
         </div>
 
         <ErrorMessage

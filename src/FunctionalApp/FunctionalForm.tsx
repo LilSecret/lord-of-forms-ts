@@ -3,6 +3,7 @@ import { ErrorMessage } from "../ErrorMessage";
 import { TInput, TPhoneInput, TUserInformation } from "../types";
 import { isEmailValid, isPhoneNumber } from "../utils/validations";
 import { allCities } from "../utils/all-cities";
+import { FunctionalPhoneInput } from "./FunctionalPhoneInput";
 
 type TFormProps = {
   setUserInformation: (userInfo: TUserInformation) => void;
@@ -29,8 +30,6 @@ export const FunctionalForm = ({ setUserInformation }: TFormProps) => {
     useRef<HTMLInputElement | null>(null),
   ];
 
-  const [input0, input1, input2, input3] = phoneNumberRefs;
-
   const [phoneNumber, setPhoneNumber] = useState<TPhoneInput>(["", "", "", ""]);
   const [isFormSubmitted, setIsFormSubmitted] = useState(false);
 
@@ -47,8 +46,6 @@ export const FunctionalForm = ({ setUserInformation }: TFormProps) => {
     useState(false),
     useState(false),
   ];
-
-  const phoneNumberLengths = [2, 2, 2, 1];
 
   const errorCheckAllInputs = () => {
     const { firstName, lastName, email, city } = singleInputs;
@@ -125,6 +122,8 @@ export const FunctionalForm = ({ setUserInformation }: TFormProps) => {
   const onPhoneInputsHandler =
     (index: number): ChangeEventHandler<HTMLInputElement> =>
     (e) => {
+      const phoneNumberLengths = [2, 2, 2, 1];
+
       const currentInputVal = phoneNumberRefs[index];
       const nextInputVal = phoneNumberRefs[index + 1];
       const prevInputVal = phoneNumberRefs[index - 1];
@@ -239,48 +238,11 @@ export const FunctionalForm = ({ setUserInformation }: TFormProps) => {
       <ErrorMessage message={cityErrorMessage} show={cityError} />
 
       <div className="input-wrap">
-        <label htmlFor="phone">Phone:</label>
-        <div id="phone-input-wrap">
-          <input
-            type="text"
-            id="phone-input-1"
-            placeholder="55"
-            value={phoneNumber[0]}
-            ref={input0}
-            onChange={onPhoneInputsHandler(0)}
-            maxLength={phoneNumberLengths[0]}
-          />
-          -
-          <input
-            type="text"
-            id="phone-input-2"
-            placeholder="55"
-            value={phoneNumber[1]}
-            ref={input1}
-            onChange={onPhoneInputsHandler(1)}
-            maxLength={phoneNumberLengths[1]}
-          />
-          -
-          <input
-            type="text"
-            id="phone-input-3"
-            placeholder="55"
-            value={phoneNumber[2]}
-            ref={input2}
-            onChange={onPhoneInputsHandler(2)}
-            maxLength={phoneNumberLengths[2]}
-          />
-          -
-          <input
-            type="text"
-            id="phone-input-4"
-            placeholder="5"
-            value={phoneNumber[3]}
-            ref={input3}
-            onChange={onPhoneInputsHandler(3)}
-            maxLength={phoneNumberLengths[3]}
-          />
-        </div>
+        <FunctionalPhoneInput
+          phoneNumber={phoneNumber}
+          phoneNumberRefs={phoneNumberRefs}
+          onPhoneInputsHandler={onPhoneInputsHandler}
+        />
       </div>
 
       <ErrorMessage message={phoneNumberErrorMessage} show={phoneNumberError} />
