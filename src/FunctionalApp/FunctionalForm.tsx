@@ -4,6 +4,7 @@ import { TInput, TPhoneInput, TUserInformation } from "../types";
 import { isEmailValid, isPhoneNumber, isValidCity } from "../utils/validations";
 import { allCities } from "../utils/all-cities";
 import { FunctionalPhoneInput } from "./FunctionalPhoneInput";
+import { FunctionalTextInput } from "./FunctionalTextInput";
 
 type TFormProps = {
   setUserInformation: (userInfo: TUserInformation) => void;
@@ -177,57 +178,65 @@ export const FunctionalForm = ({ setUserInformation }: TFormProps) => {
 
       {/* first name input */}
       <div className="input-wrap">
-        <label>{"First Name"}:</label>
-        <input
-          placeholder="Bilbo"
-          onChange={(e) => {
-            updateStateOnSingleInputs("firstName", e.target.value);
-            errorCheckInput("firstName", e.target.value);
+        <FunctionalTextInput
+          label="First Name"
+          inputProps={{
+            onChange: (e) => {
+              updateStateOnSingleInputs("firstName", e.target.value);
+              errorCheckInput("firstName", e.target.value);
+            },
+            placeholder: "Bilbo",
+            value: singleInputs.firstName,
           }}
-          value={singleInputs.firstName}
         />
       </div>
       <ErrorMessage message={firstNameErrorMessage} show={firstNameError} />
 
       {/* last name input */}
       <div className="input-wrap">
-        <label>{"Last Name"}:</label>
-        <input
-          placeholder="Baggins"
-          onChange={(e) => {
-            updateStateOnSingleInputs("lastName", e.target.value);
-            errorCheckInput("lastName", e.target.value);
+        <FunctionalTextInput
+          label="Last Name"
+          inputProps={{
+            onChange: (e) => {
+              updateStateOnSingleInputs("lastName", e.target.value);
+              errorCheckInput("lastName", e.target.value);
+            },
+            placeholder: "Baggins",
+            value: singleInputs.lastName,
           }}
-          value={singleInputs.lastName}
         />
       </div>
       <ErrorMessage message={lastNameErrorMessage} show={lastNameError} />
 
       {/* Email Input */}
       <div className="input-wrap">
-        <label>{"Email"}:</label>
-        <input
-          placeholder="bilbo-baggins@adventurehobbits.net"
-          onChange={(e) => {
-            updateStateOnSingleInputs("email", e.target.value);
-            errorCheckInput("email", e.target.value);
+        <FunctionalTextInput
+          label="Email"
+          inputProps={{
+            onChange: (e) => {
+              updateStateOnSingleInputs("email", e.target.value);
+              errorCheckInput("email", e.target.value);
+            },
+            placeholder: "bilbo@hobbiton-adventures.com",
+            value: singleInputs.email,
           }}
-          value={singleInputs.email}
         />
       </div>
       <ErrorMessage message={emailErrorMessage} show={emailError} />
 
       {/* City Input */}
       <div className="input-wrap">
-        <label>{"City"}:</label>
-        <input
-          placeholder="Hobbiton"
-          list="cities"
-          onChange={(e) => {
-            updateStateOnSingleInputs("city", e.target.value);
-            errorCheckInput("city", e.target.value);
+        <FunctionalTextInput
+          label="City"
+          inputProps={{
+            onChange: (e) => {
+              updateStateOnSingleInputs("city", e.target.value);
+              errorCheckInput("city", e.target.value);
+            },
+            placeholder: "Hobbiton",
+            list: "cities",
+            value: singleInputs.city,
           }}
-          value={singleInputs.city}
         />
         <datalist id="cities">
           {allCities.map((city) => (
