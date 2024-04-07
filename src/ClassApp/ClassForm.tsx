@@ -157,14 +157,20 @@ export class ClassForm extends Component<TProps> {
     }
   };
 
-  updateUserInformation = (noErrorsCaught: boolean) => {
-    if (noErrorsCaught) {
-      const validUserInformation = {
-        ...this.state.singleInputs,
-        phone: this.state.phoneNumber.join(""),
-      };
-      this.props.setUserInformation(validUserInformation);
-    }
+  updateUserInformation = () => {
+    const validUserInformation = {
+      ...this.state.singleInputs,
+      phone: this.state.phoneNumber.join(""),
+    };
+    this.props.setUserInformation(validUserInformation);
+  };
+
+  resetForm = () => {
+    this.setState({
+      singleInputs: { firstName: "", lastName: "", email: "", city: "" },
+    });
+    this.setState({ phoneNumber: ["", "", "", ""] });
+    this.setState({ isFormSubmitted: false });
   };
 
   render() {
@@ -176,13 +182,17 @@ export class ClassForm extends Component<TProps> {
       phoneNumberError,
     } = this.state;
 
+    const { firstName, lastName, email, city } = this.state.singleInputs;
+
     return (
       <form
         onSubmit={(e) => {
           e.preventDefault();
           this.setState({ isFormSubmitted: true });
-          const noErrors = this.errorCheckAllInputs();
-          this.updateUserInformation(noErrors);
+          if (this.errorCheckAllInputs()) {
+            this.updateUserInformation();
+            this.resetForm();
+          }
         }}
       >
         <u>
@@ -198,6 +208,7 @@ export class ClassForm extends Component<TProps> {
               this.updateStateOnSingleInputs("firstName", e.target.value);
               this.errorCheckInput("firstName", e.target.value);
             }}
+            value={firstName}
           />
         </div>
         <ErrorMessage message={firstNameErrorMessage} show={firstNameError} />
@@ -211,6 +222,7 @@ export class ClassForm extends Component<TProps> {
               this.updateStateOnSingleInputs("lastName", e.target.value);
               this.errorCheckInput("lastName", e.target.value);
             }}
+            value={lastName}
           />
         </div>
         <ErrorMessage message={lastNameErrorMessage} show={lastNameError} />
@@ -224,6 +236,7 @@ export class ClassForm extends Component<TProps> {
               this.updateStateOnSingleInputs("email", e.target.value);
               this.errorCheckInput("email", e.target.value);
             }}
+            value={email}
           />
         </div>
         <ErrorMessage message={emailErrorMessage} show={emailError} />
@@ -238,6 +251,7 @@ export class ClassForm extends Component<TProps> {
               this.updateStateOnSingleInputs("city", e.target.value);
               this.errorCheckInput("city", e.target.value);
             }}
+            value={city}
           />
           <datalist id="cities">
             {allCities.map((city) => (

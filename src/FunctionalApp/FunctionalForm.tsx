@@ -126,6 +126,7 @@ export const FunctionalForm = ({ setUserInformation }: TFormProps) => {
   const resetForm = () => {
     setSingleInputs({ firstName: "", lastName: "", email: "", city: "" });
     setPhoneNumber(["", "", "", ""]);
+    setIsFormSubmitted(false);
   };
 
   const onPhoneInputsHandler =
