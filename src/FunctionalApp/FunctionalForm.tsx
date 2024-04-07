@@ -115,14 +115,17 @@ export const FunctionalForm = ({ setUserInformation }: TFormProps) => {
     setSingleInputs(updatedObject);
   };
 
-  const updateUserInformation = (noCaughtErrors: boolean) => {
-    if (noCaughtErrors) {
-      const validUserInformation = {
-        ...singleInputs,
-        phone: phoneNumber.join(""),
-      };
-      setUserInformation(validUserInformation);
-    }
+  const updateUserInformation = () => {
+    const validUserInformation = {
+      ...singleInputs,
+      phone: phoneNumber.join(""),
+    };
+    setUserInformation(validUserInformation);
+  };
+
+  const resetForm = () => {
+    setSingleInputs({ firstName: "", lastName: "", email: "", city: "" });
+    setPhoneNumber(["", "", "", ""]);
   };
 
   const onPhoneInputsHandler =
@@ -170,8 +173,10 @@ export const FunctionalForm = ({ setUserInformation }: TFormProps) => {
     <form
       onSubmit={(e) => {
         e.preventDefault();
-        const noErrors = errorCheckAllInputs();
-        updateUserInformation(noErrors);
+        if (errorCheckAllInputs()) {
+          updateUserInformation();
+          resetForm();
+        }
       }}
     >
       <u>
@@ -187,6 +192,7 @@ export const FunctionalForm = ({ setUserInformation }: TFormProps) => {
             updateStateOnSingleInputs("firstName", e.target.value);
             errorCheckInput("firstName", e.target.value);
           }}
+          value={singleInputs.firstName}
         />
       </div>
       <ErrorMessage message={firstNameErrorMessage} show={firstNameError} />
@@ -200,6 +206,7 @@ export const FunctionalForm = ({ setUserInformation }: TFormProps) => {
             updateStateOnSingleInputs("lastName", e.target.value);
             errorCheckInput("lastName", e.target.value);
           }}
+          value={singleInputs.lastName}
         />
       </div>
       <ErrorMessage message={lastNameErrorMessage} show={lastNameError} />
@@ -213,6 +220,7 @@ export const FunctionalForm = ({ setUserInformation }: TFormProps) => {
             updateStateOnSingleInputs("email", e.target.value);
             errorCheckInput("email", e.target.value);
           }}
+          value={singleInputs.email}
         />
       </div>
       <ErrorMessage message={emailErrorMessage} show={emailError} />
@@ -227,6 +235,7 @@ export const FunctionalForm = ({ setUserInformation }: TFormProps) => {
             updateStateOnSingleInputs("city", e.target.value);
             errorCheckInput("city", e.target.value);
           }}
+          value={singleInputs.city}
         />
         <datalist id="cities">
           {allCities.map((city) => (
