@@ -1,19 +1,12 @@
 import { ChangeEventHandler, useRef, useState } from "react";
 import { ErrorMessage } from "../ErrorMessage";
-import { TPhoneInput, TUserInformation } from "../types";
-import { isEmailValid } from "../utils/validations";
+import { TInput, TPhoneInput, TUserInformation } from "../types";
+import { isEmailValid, isPhoneNumber } from "../utils/validations";
 import { allCities } from "../utils/all-cities";
 
 type TFormProps = {
   setUserInformation: (userInfo: TUserInformation) => void;
 };
-
-type TErrorCheckInputs =
-  | "firstName"
-  | "lastName"
-  | "email"
-  | "city"
-  | "phoneNumber";
 
 const firstNameErrorMessage = "First name must be at least 2 characters long";
 const lastNameErrorMessage = "Last name must be at least 2 characters long";
@@ -81,7 +74,7 @@ export const FunctionalForm = ({ setUserInformation }: TFormProps) => {
     return true;
   };
 
-  const errorCheckInput = (input: TErrorCheckInputs, value: string) => {
+  const errorCheckInput = (input: TInput, value: string) => {
     if (isFormSubmitted) {
       if (input === "firstName") {
         setFirstNameError(value.length <= 1);
@@ -95,7 +88,7 @@ export const FunctionalForm = ({ setUserInformation }: TFormProps) => {
       if (input === "city") {
         setCityError(!allCities.includes(value));
       }
-      if (input === "phoneNumber") {
+      if (input === "phone") {
         let phoneNumberLength = 0;
         phoneNumberRefs.forEach((inputRef) => {
           phoneNumberLength += Number(inputRef.current?.value.length);
@@ -132,7 +125,6 @@ export const FunctionalForm = ({ setUserInformation }: TFormProps) => {
   const onPhoneInputsHandler =
     (index: number): ChangeEventHandler<HTMLInputElement> =>
     (e) => {
-      const regex = /[^0-9\s]/;
       const currentInputVal = phoneNumberRefs[index];
       const nextInputVal = phoneNumberRefs[index + 1];
       const prevInputVal = phoneNumberRefs[index - 1];
@@ -153,12 +145,12 @@ export const FunctionalForm = ({ setUserInformation }: TFormProps) => {
           ? true
           : false;
 
-      if (!regex.test(value)) {
+      if (isPhoneNumber(value)) {
         setPhoneNumber(newPhoneInput);
       }
 
       if (isFormSubmitted) {
-        errorCheckInput("phoneNumber", "null");
+        errorCheckInput("phone", "null");
       }
 
       if (shouldGoNext) {

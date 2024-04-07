@@ -1,15 +1,8 @@
 import { ChangeEventHandler, Component, createRef } from "react";
 import { ErrorMessage } from "../ErrorMessage";
-import { TPhoneInput, TUserInformation } from "../types";
-import { isEmailValid } from "../utils/validations";
+import { TPhoneInput, TUserInformation, TInput } from "../types";
+import { isEmailValid, isPhoneNumber } from "../utils/validations";
 import { allCities } from "../utils/all-cities";
-
-type TErrorCheckInputs =
-  | "firstName"
-  | "lastName"
-  | "email"
-  | "city"
-  | "phoneNumber";
 
 type TProps = {
   setUserInformation: (userInfo: TUserInformation) => void;
@@ -65,7 +58,6 @@ export class ClassForm extends Component<TProps> {
   onPhoneInputsHandler =
     (index: number): ChangeEventHandler<HTMLInputElement> =>
     (e) => {
-      const regex = /[^0-9\s]/;
       const currentInputVal = this.phoneNumberRefs[index];
       const nextInputVal = this.phoneNumberRefs[index + 1];
       const prevInputVal = this.phoneNumberRefs[index - 1];
@@ -86,12 +78,12 @@ export class ClassForm extends Component<TProps> {
           ? true
           : false;
 
-      if (!regex.test(value)) {
+      if (isPhoneNumber(value)) {
         this.setState({ phoneNumber: newPhoneInput });
       }
 
       if (this.state.isFormSubmitted) {
-        this.errorCheckInput("phoneNumber", "null");
+        this.errorCheckInput("phone", "null");
       }
 
       if (shouldGoNext) {
@@ -128,7 +120,7 @@ export class ClassForm extends Component<TProps> {
     return true;
   };
 
-  errorCheckInput = (input: TErrorCheckInputs, value: string) => {
+  errorCheckInput = (input: TInput, value: string) => {
     if (this.state.isFormSubmitted) {
       if (input === "firstName") {
         this.setState({ firstNameError: value.length <= 1 });
@@ -142,7 +134,7 @@ export class ClassForm extends Component<TProps> {
       if (input === "city") {
         this.setState({ cityError: !allCities.includes(value) });
       }
-      if (input === "phoneNumber") {
+      if (input === "phone") {
         let phoneNumberLength = 0;
         this.phoneNumberRefs.forEach((inputRef) => {
           phoneNumberLength += Number(inputRef.current?.value.length);
@@ -183,7 +175,6 @@ export class ClassForm extends Component<TProps> {
       <form
         onSubmit={(e) => {
           e.preventDefault();
-          this.setState({ isFormSubmitted: true });
           if (this.errorCheckAllInputs()) {
             this.updateUserInformation();
             this.resetForm();
@@ -306,7 +297,13 @@ export class ClassForm extends Component<TProps> {
           show={phoneNumberError}
         />
 
-        <input type="submit" value="Submit" />
+        <input
+          type="submit"
+          value="Submit"
+          onClick={() => {
+            this.setState({ isFormSubmitted: true });
+          }}
+        />
       </form>
     );
   }

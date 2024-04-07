@@ -3,3 +3,8 @@ export function isEmailValid(email: string) {
 
   return emailRegex.test(email);
 }
+
+export function isPhoneNumber(value: string) {
+  const regex = /[^0-9\s]/;
+  return !regex.test(value);
+}
