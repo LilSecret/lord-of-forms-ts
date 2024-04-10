@@ -1,6 +1,6 @@
 import { ChangeEventHandler, Component } from "react";
 import { ErrorMessage } from "../ErrorMessage";
-import { TPhoneInput, TUserInformation, TInput } from "../types";
+import { TPhoneInput, TUserInformation } from "../types";
 import { isEmailValid, isValidCity } from "../utils/validations";
 import { allCities } from "../utils/all-cities";
 import ClassPhoneInput from "./ClassPhoneInput";
