@@ -1,7 +1,7 @@
-import { ChangeEventHandler, useRef, useState } from "react";
+import { ChangeEventHandler, useState } from "react";
 import { ErrorMessage } from "../ErrorMessage";
-import { TInput, TPhoneInput, TUserInformation } from "../types";
-import { isEmailValid, isPhoneNumber, isValidCity } from "../utils/validations";
+import { TPhoneInput, TUserInformation } from "../types";
+import { isEmailValid, isValidCity } from "../utils/validations";
 import { allCities } from "../utils/all-cities";
 import { FunctionalPhoneInput } from "./FunctionalPhoneInput";
 import { FunctionalTextInput } from "./FunctionalTextInput";
@@ -14,159 +14,77 @@ const firstNameErrorMessage = "First name must be at least 2 characters long";
 const lastNameErrorMessage = "Last name must be at least 2 characters long";
 const emailErrorMessage = "Email is Invalid";
 const cityErrorMessage = "State is Invalid";
-const phoneNumberErrorMessage = "Invalid Phone Number";
+const phoneNumberErrorMessage = "Phone Number is Invalid";
 
 export const FunctionalForm = ({ setUserInformation }: TFormProps) => {
   const [singleInputs, setSingleInputs] = useState({
-    firstName: "",
-    lastName: "",
-    email: "",
-    city: "",
+    firstNameInput: "",
+    lastNameInput: "",
+    emailInput: "",
+    cityInput: "",
   });
-
-  const phoneNumberRefs = [
-    useRef<HTMLInputElement | null>(null),
-    useRef<HTMLInputElement | null>(null),
-    useRef<HTMLInputElement | null>(null),
-    useRef<HTMLInputElement | null>(null),
-  ];
 
   const [phoneNumber, setPhoneNumber] = useState<TPhoneInput>(["", "", "", ""]);
   const [isFormSubmitted, setIsFormSubmitted] = useState(false);
 
-  const [
-    [firstNameError, setFirstNameError],
-    [lastNameError, setLastNameError],
-    [emailError, setEmailError],
-    [cityError, setCityError],
-    [phoneNumberError, setPhoneNumberError],
-  ] = [
-    useState(false),
-    useState(false),
-    useState(false),
-    useState(false),
-    useState(false),
-  ];
+  const firstNameError =
+    singleInputs.firstNameInput.length <= 1 && isFormSubmitted;
+  const lastNameError =
+    singleInputs.lastNameInput.length <= 1 && isFormSubmitted;
+  const emailError = !isEmailValid(singleInputs.emailInput) && isFormSubmitted;
+  const cityError = !isValidCity(singleInputs.cityInput) && isFormSubmitted;
+  const phoneNumberError = phoneNumber.join("").length != 7 && isFormSubmitted;
 
-  const errorCheckAllInputs = () => {
-    const { firstName, lastName, email, city } = singleInputs;
-    const inputConditions = [
-      firstName.length <= 1,
-      lastName.length <= 1,
-      !isEmailValid(email),
-      !isValidCity(city),
-      phoneNumber.join("").length < 7,
-    ];
+  const singleInputHandler =
+    (input: keyof typeof singleInputs): ChangeEventHandler<HTMLInputElement> =>
+    (e) => {
+      const updatedObject = { ...singleInputs };
+      updatedObject[input] = e.target.value;
+      setSingleInputs(updatedObject);
+    };
 
-    setIsFormSubmitted(true);
-    setFirstNameError(inputConditions[0]);
-    setLastNameError(inputConditions[1]);
-    setEmailError(inputConditions[2]);
-    setCityError(inputConditions[3]);
-    setPhoneNumberError(inputConditions[4]);
+  const caughtError = () => {
+    const error =
+      firstNameError &&
+      lastNameError &&
+      emailError &&
+      cityError &&
+      phoneNumberError;
 
-    if (inputConditions.includes(true)) {
-      alert("You have entered a bad form");
-      return false;
+    if (error) {
+      alert("bad data input");
     }
-    return true;
-  };
 
-  const errorCheckInput = (input: TInput, value: string) => {
-    if (isFormSubmitted) {
-      if (input === "firstName") {
-        setFirstNameError(value.length <= 1);
-      }
-      if (input === "lastName") {
-        setLastNameError(value.length <= 1);
-      }
-      if (input === "email") {
-        setEmailError(!isEmailValid(value));
-      }
-      if (input === "city") {
-        setCityError(!isValidCity(value));
-      }
-      if (input === "phone") {
-        let phoneNumberLength = 0;
-        phoneNumberRefs.forEach((inputRef) => {
-          phoneNumberLength += Number(inputRef.current?.value.length);
-        });
-        setPhoneNumberError(phoneNumberLength < 7);
-      }
-    }
-  };
-
-  const updateStateOnSingleInputs = (
-    property: keyof typeof singleInputs,
-    value: string
-  ) => {
-    const updatedObject = { ...singleInputs };
-
-    updatedObject[property] = value;
-    setSingleInputs(updatedObject);
+    return error;
   };
 
   const updateUserInformation = () => {
     const validUserInformation = {
-      ...singleInputs,
+      firstName: singleInputs.firstNameInput,
+      lastName: singleInputs.lastNameInput,
+      email: singleInputs.emailInput,
+      city: singleInputs.cityInput,
       phone: phoneNumber.join(""),
     };
     setUserInformation(validUserInformation);
   };
 
   const resetForm = () => {
-    setSingleInputs({ firstName: "", lastName: "", email: "", city: "" });
+    setSingleInputs({
+      firstNameInput: "",
+      lastNameInput: "",
+      emailInput: "",
+      cityInput: "",
+    });
     setPhoneNumber(["", "", "", ""]);
     setIsFormSubmitted(false);
   };
-
-  const onPhoneInputsHandler =
-    (index: number): ChangeEventHandler<HTMLInputElement> =>
-    (e) => {
-      const phoneNumberLengths = [2, 2, 2, 1];
-
-      const currentInputVal = phoneNumberRefs[index];
-      const nextInputVal = phoneNumberRefs[index + 1];
-      const prevInputVal = phoneNumberRefs[index - 1];
-
-      const value = e.target.value;
-      const newPhoneInput = phoneNumber.map((phoneInput, inputIndex) =>
-        inputIndex === index ? value : phoneInput
-      ) as TPhoneInput;
-
-      const shouldGoNext =
-        currentInputVal.current?.value.length === phoneNumberLengths[index] &&
-        nextInputVal
-          ? true
-          : false;
-
-      const shouldGoPrev =
-        currentInputVal.current?.value.length === 0 && prevInputVal
-          ? true
-          : false;
-
-      if (isPhoneNumber(value)) {
-        setPhoneNumber(newPhoneInput);
-      }
-
-      if (isFormSubmitted) {
-        errorCheckInput("phone", "null");
-      }
-
-      if (shouldGoNext) {
-        phoneNumberRefs[index + 1].current?.focus();
-      }
-
-      if (shouldGoPrev) {
-        prevInputVal.current?.focus();
-      }
-    };
 
   return (
     <form
       onSubmit={(e) => {
         e.preventDefault();
-        if (errorCheckAllInputs()) {
+        if (!caughtError()) {
           updateUserInformation();
           resetForm();
         }
@@ -181,12 +99,9 @@ export const FunctionalForm = ({ setUserInformation }: TFormProps) => {
         <FunctionalTextInput
           label="First Name"
           inputProps={{
-            onChange: (e) => {
-              updateStateOnSingleInputs("firstName", e.target.value);
-              errorCheckInput("firstName", e.target.value);
-            },
+            onChange: singleInputHandler("firstNameInput"),
             placeholder: "Bilbo",
-            value: singleInputs.firstName,
+            value: singleInputs.firstNameInput,
           }}
         />
       </div>
@@ -197,12 +112,9 @@ export const FunctionalForm = ({ setUserInformation }: TFormProps) => {
         <FunctionalTextInput
           label="Last Name"
           inputProps={{
-            onChange: (e) => {
-              updateStateOnSingleInputs("lastName", e.target.value);
-              errorCheckInput("lastName", e.target.value);
-            },
+            onChange: singleInputHandler("lastNameInput"),
             placeholder: "Baggins",
-            value: singleInputs.lastName,
+            value: singleInputs.lastNameInput,
           }}
         />
       </div>
@@ -213,12 +125,9 @@ export const FunctionalForm = ({ setUserInformation }: TFormProps) => {
         <FunctionalTextInput
           label="Email"
           inputProps={{
-            onChange: (e) => {
-              updateStateOnSingleInputs("email", e.target.value);
-              errorCheckInput("email", e.target.value);
-            },
+            onChange: singleInputHandler("emailInput"),
             placeholder: "bilbo@hobbiton-adventures.com",
-            value: singleInputs.email,
+            value: singleInputs.emailInput,
           }}
         />
       </div>
@@ -229,13 +138,10 @@ export const FunctionalForm = ({ setUserInformation }: TFormProps) => {
         <FunctionalTextInput
           label="City"
           inputProps={{
-            onChange: (e) => {
-              updateStateOnSingleInputs("city", e.target.value);
-              errorCheckInput("city", e.target.value);
-            },
+            onChange: singleInputHandler("cityInput"),
             placeholder: "Hobbiton",
             list: "cities",
-            value: singleInputs.city,
+            value: singleInputs.cityInput,
           }}
         />
         <datalist id="cities">
@@ -249,8 +155,7 @@ export const FunctionalForm = ({ setUserInformation }: TFormProps) => {
       <div className="input-wrap">
         <FunctionalPhoneInput
           phoneNumber={phoneNumber}
-          phoneNumberRefs={phoneNumberRefs}
-          onPhoneInputsHandler={onPhoneInputsHandler}
+          setPhoneNumber={setPhoneNumber}
         />
       </div>
 

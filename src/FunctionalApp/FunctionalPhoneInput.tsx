@@ -1,19 +1,63 @@
-import { ChangeEventHandler } from "react";
+import { ChangeEventHandler, useRef } from "react";
 import { TPhoneInput } from "../types";
+import { isPhoneNumber } from "../utils/validations";
 
 type TPhoneInputProps = {
   phoneNumber: TPhoneInput;
-  phoneNumberRefs: React.MutableRefObject<HTMLInputElement | null>[];
-  onPhoneInputsHandler: (index: number) => ChangeEventHandler<HTMLInputElement>;
+  setPhoneNumber: (phoneNumber: TPhoneInput) => void;
 };
 
 export const FunctionalPhoneInput = ({
   phoneNumber,
-  phoneNumberRefs,
-  onPhoneInputsHandler,
+  setPhoneNumber,
 }: TPhoneInputProps) => {
+  const phoneNumberRefs = [
+    useRef<HTMLInputElement | null>(null),
+    useRef<HTMLInputElement | null>(null),
+    useRef<HTMLInputElement | null>(null),
+    useRef<HTMLInputElement | null>(null),
+  ];
+
   const [input0, input1, input2, input3] = phoneNumberRefs;
   const phoneNumberLengths = [2, 2, 2, 1];
+
+  const onPhoneInputsHandler =
+    (index: number): ChangeEventHandler<HTMLInputElement> =>
+    (e) => {
+      const phoneNumberLengths = [2, 2, 2, 1];
+
+      const currentInputVal = phoneNumberRefs[index];
+      const nextInputVal = phoneNumberRefs[index + 1];
+      const prevInputVal = phoneNumberRefs[index - 1];
+
+      const value = e.target.value;
+      const newPhoneInput = phoneNumber.map((phoneInput, inputIndex) =>
+        inputIndex === index ? value : phoneInput
+      ) as TPhoneInput;
+
+      const shouldGoNext =
+        currentInputVal.current?.value.length === phoneNumberLengths[index] &&
+        nextInputVal
+          ? true
+          : false;
+
+      const shouldGoPrev =
+        currentInputVal.current?.value.length === 0 && prevInputVal
+          ? true
+          : false;
+
+      if (isPhoneNumber(value)) {
+        setPhoneNumber(newPhoneInput);
+      }
+
+      if (shouldGoNext) {
+        phoneNumberRefs[index + 1].current?.focus();
+      }
+
+      if (shouldGoPrev) {
+        prevInputVal.current?.focus();
+      }
+    };
 
   return (
     <>
