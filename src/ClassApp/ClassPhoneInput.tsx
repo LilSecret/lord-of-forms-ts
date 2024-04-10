@@ -1,17 +1,62 @@
-import React, { ChangeEventHandler, Component } from "react";
+import { ChangeEventHandler, Component, createRef } from "react";
 import { TPhoneInput } from "../types";
+import { isPhoneNumber } from "../utils/validations";
 
 type TPhoneInputProps = {
   phoneNumber: TPhoneInput;
-  phoneNumberRefs: React.MutableRefObject<HTMLInputElement | null>[];
-  onPhoneInputsHandler: (index: number) => ChangeEventHandler<HTMLInputElement>;
+  setPhoneInput: (phoneNumber: TPhoneInput) => void;
 };
 
 export default class ClassPhoneInput extends Component<TPhoneInputProps> {
+  phoneNumberRefs = [
+    createRef<HTMLInputElement>(),
+    createRef<HTMLInputElement>(),
+    createRef<HTMLInputElement>(),
+    createRef<HTMLInputElement>(),
+  ];
+
   render() {
     const phoneNumberLengths = [2, 2, 2, 1];
-    const { phoneNumber, phoneNumberRefs, onPhoneInputsHandler } = this.props;
-    const [input0, input1, input2, input3] = phoneNumberRefs;
+    const [input0, input1, input2, input3] = this.phoneNumberRefs;
+    const { phoneNumber, setPhoneInput } = this.props;
+
+    const onPhoneInputsHandler =
+      (index: number): ChangeEventHandler<HTMLInputElement> =>
+      (e) => {
+        const phoneNumberLengths = [2, 2, 2, 1];
+
+        const currentInputVal = this.phoneNumberRefs[index];
+        const nextInputVal = this.phoneNumberRefs[index + 1];
+        const prevInputVal = this.phoneNumberRefs[index - 1];
+
+        const value = e.target.value;
+        const newPhoneInput = phoneNumber.map((phoneInput, inputIndex) =>
+          inputIndex === index ? value : phoneInput
+        ) as TPhoneInput;
+
+        const shouldGoNext =
+          currentInputVal.current?.value.length === phoneNumberLengths[index] &&
+          nextInputVal
+            ? true
+            : false;
+
+        const shouldGoPrev =
+          currentInputVal.current?.value.length === 0 && prevInputVal
+            ? true
+            : false;
+
+        if (isPhoneNumber(value)) {
+          setPhoneInput(newPhoneInput);
+        }
+
+        if (shouldGoNext) {
+          this.phoneNumberRefs[index + 1].current?.focus();
+        }
+
+        if (shouldGoPrev) {
+          prevInputVal.current?.focus();
+        }
+      };
 
     return (
       <>

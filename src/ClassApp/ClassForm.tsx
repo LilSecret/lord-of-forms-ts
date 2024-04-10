@@ -1,7 +1,7 @@
-import { ChangeEventHandler, Component, createRef } from "react";
+import { ChangeEventHandler, Component } from "react";
 import { ErrorMessage } from "../ErrorMessage";
 import { TPhoneInput, TUserInformation, TInput } from "../types";
-import { isEmailValid, isPhoneNumber, isValidCity } from "../utils/validations";
+import { isEmailValid, isValidCity } from "../utils/validations";
 import { allCities } from "../utils/all-cities";
 import ClassPhoneInput from "./ClassPhoneInput";
 import ClassTextInput from "./ClassTextInput";
@@ -12,18 +12,13 @@ type TProps = {
 
 type TState = {
   singleInputs: {
-    firstName: string;
-    lastName: string;
-    email: string;
-    city: string;
+    firstNameInput: string;
+    lastNameInput: string;
+    emailInput: string;
+    cityInput: string;
   };
   phoneNumber: TPhoneInput;
   isFormSubmitted: boolean;
-  firstNameError: boolean;
-  lastNameError: boolean;
-  emailError: boolean;
-  cityError: boolean;
-  phoneNumberError: boolean;
 };
 
 const firstNameErrorMessage = "First name must be at least 2 characters long";
@@ -35,167 +30,86 @@ const phoneNumberErrorMessage = "Invalid Phone Number";
 export class ClassForm extends Component<TProps, TState> {
   state: TState = {
     singleInputs: {
-      firstName: "",
-      lastName: "",
-      email: "",
-      city: "",
+      firstNameInput: "",
+      lastNameInput: "",
+      emailInput: "",
+      cityInput: "",
     },
     phoneNumber: ["", "", "", ""],
     isFormSubmitted: false,
-    firstNameError: false,
-    lastNameError: false,
-    emailError: false,
-    cityError: false,
-    phoneNumberError: false,
   };
 
-  phoneNumberRefs = [
-    createRef<HTMLInputElement>(),
-    createRef<HTMLInputElement>(),
-    createRef<HTMLInputElement>(),
-    createRef<HTMLInputElement>(),
-  ];
-
-  phoneNumberLengths = [2, 2, 2, 1];
-
-  inputRef0 = this.phoneNumberRefs[0];
-  inputRef1 = this.phoneNumberRefs[1];
-  inputRef2 = this.phoneNumberRefs[2];
-  inputRef3 = this.phoneNumberRefs[3];
-
-  updateStateOnSingleInputs = (
-    property: keyof typeof this.state.singleInputs,
-    value: string
-  ) => {
-    const updatedObject = { ...this.state.singleInputs };
-
-    updatedObject[property] = value;
-    this.setState({ singleInputs: updatedObject });
-  };
-
-  onPhoneInputsHandler =
-    (index: number): ChangeEventHandler<HTMLInputElement> =>
-    (e) => {
-      const currentInputVal = this.phoneNumberRefs[index];
-      const nextInputVal = this.phoneNumberRefs[index + 1];
-      const prevInputVal = this.phoneNumberRefs[index - 1];
-
-      const value = e.target.value;
-      const newPhoneInput = this.state.phoneNumber.map(
-        (phoneInput, inputIndex) => (inputIndex === index ? value : phoneInput)
-      ) as TPhoneInput;
-
-      const shouldGoNext =
-        currentInputVal.current?.value.length ===
-          this.phoneNumberLengths[index] && nextInputVal
-          ? true
-          : false;
-
-      const shouldGoPrev =
-        currentInputVal.current?.value.length === 0 && prevInputVal
-          ? true
-          : false;
-
-      if (isPhoneNumber(value)) {
-        this.setState({ phoneNumber: newPhoneInput });
-      }
-
-      if (this.state.isFormSubmitted) {
-        this.errorCheckInput("phone", "null");
-      }
-
-      if (shouldGoNext) {
-        this.phoneNumberRefs[index + 1].current?.focus();
-      }
-
-      if (shouldGoPrev) {
-        prevInputVal.current?.focus();
-      }
-    };
-
-  errorCheckAllInputs = () => {
-    const { firstName, lastName, email, city } = this.state.singleInputs;
-    const { phoneNumber } = this.state;
-    const inputConditions = [
-      firstName.length <= 1,
-      lastName.length <= 1,
-      !isEmailValid(email),
-      !isValidCity(city),
-      phoneNumber.join("").length < 7,
-    ];
-
-    this.setState({ isFormSubmitted: true });
-    this.setState({ firstNameError: inputConditions[0] });
-    this.setState({ lastNameError: inputConditions[1] });
-    this.setState({ emailError: inputConditions[2] });
-    this.setState({ cityError: inputConditions[3] });
-    this.setState({ phoneNumberError: inputConditions[4] });
-
-    if (inputConditions.includes(true)) {
-      alert("You have entered a bad form");
-      return false;
-    }
-    return true;
-  };
-
-  errorCheckInput = (input: TInput, value: string) => {
-    if (this.state.isFormSubmitted) {
-      if (input === "firstName") {
-        this.setState({ firstNameError: value.length <= 1 });
-      }
-      if (input === "lastName") {
-        this.setState({ lastNameError: value.length <= 1 });
-      }
-      if (input === "email") {
-        this.setState({ emailError: !isEmailValid(value) });
-      }
-      if (input === "city") {
-        this.setState({ cityError: !isValidCity(value) });
-      }
-      if (input === "phone") {
-        let phoneNumberLength = 0;
-        this.phoneNumberRefs.forEach((inputRef) => {
-          phoneNumberLength += Number(inputRef.current?.value.length);
-        });
-        this.setState({ phoneNumberError: phoneNumberLength < 7 });
-      }
-    }
-  };
-
-  updateUserInformation = () => {
-    const validUserInformation = {
-      ...this.state.singleInputs,
-      phone: this.state.phoneNumber.join(""),
-    };
-    this.props.setUserInformation(validUserInformation);
-  };
-
-  resetForm = () => {
-    this.setState({
-      singleInputs: { firstName: "", lastName: "", email: "", city: "" },
-    });
-    this.setState({ phoneNumber: ["", "", "", ""] });
-    this.setState({ isFormSubmitted: false });
+  setPhoneInput = (phoneNumber: TPhoneInput) => {
+    this.setState({ phoneNumber: phoneNumber });
   };
 
   render() {
-    const {
-      firstNameError,
-      lastNameError,
-      emailError,
-      cityError,
-      phoneNumberError,
-    } = this.state;
+    const { firstNameInput, lastNameInput, emailInput, cityInput } =
+      this.state.singleInputs;
+    const { isFormSubmitted, phoneNumber } = this.state;
 
-    const { firstName, lastName, email, city } = this.state.singleInputs;
+    const firstNameError = firstNameInput.length <= 1 && isFormSubmitted;
+    const lastNameError = lastNameInput.length <= 1 && isFormSubmitted;
+    const emailError = !isEmailValid(emailInput) && isFormSubmitted;
+    const cityError =
+      !isValidCity(this.state.singleInputs.cityInput) && isFormSubmitted;
+    const phoneNumberError =
+      phoneNumber.join("").length != 7 && isFormSubmitted;
+
+    const singleInputHandler =
+      (
+        input: keyof typeof this.state.singleInputs
+      ): ChangeEventHandler<HTMLInputElement> =>
+      (e) => {
+        const updatedObject = { ...this.state.singleInputs };
+        updatedObject[input] = e.target.value;
+        this.setState({ singleInputs: updatedObject });
+      };
+
+    const caughtError = () => {
+      const error =
+        firstNameError &&
+        lastNameError &&
+        emailError &&
+        cityError &&
+        phoneNumberError;
+      if (error) {
+        alert("bad data input");
+      }
+      return error;
+    };
+
+    const updateUserInformation = () => {
+      const validUserInformation = {
+        firstName: firstNameInput,
+        lastName: lastNameInput,
+        email: emailInput,
+        city: cityInput,
+        phone: phoneNumber.join(""),
+      };
+      this.props.setUserInformation(validUserInformation);
+    };
+
+    const resetForm = () => {
+      this.setState({
+        singleInputs: {
+          firstNameInput: "",
+          lastNameInput: "",
+          emailInput: "",
+          cityInput: "",
+        },
+      });
+      this.setState({ phoneNumber: ["", "", "", ""] });
+      this.setState({ isFormSubmitted: false });
+    };
 
     return (
       <form
         onSubmit={(e) => {
           e.preventDefault();
-          if (this.errorCheckAllInputs()) {
-            this.updateUserInformation();
-            this.resetForm();
+          if (!caughtError()) {
+            updateUserInformation();
+            resetForm();
           }
         }}
       >
@@ -208,12 +122,9 @@ export class ClassForm extends Component<TProps, TState> {
           <ClassTextInput
             label="First Name"
             inputProps={{
-              onChange: (e) => {
-                this.updateStateOnSingleInputs("firstName", e.target.value);
-                this.errorCheckInput("firstName", e.target.value);
-              },
+              onChange: singleInputHandler("firstNameInput"),
               placeholder: "Bilbo",
-              value: firstName,
+              value: firstNameInput,
             }}
           />
         </div>
@@ -224,12 +135,9 @@ export class ClassForm extends Component<TProps, TState> {
           <ClassTextInput
             label="Last Name"
             inputProps={{
-              onChange: (e) => {
-                this.updateStateOnSingleInputs("lastName", e.target.value);
-                this.errorCheckInput("lastName", e.target.value);
-              },
+              onChange: singleInputHandler("lastNameInput"),
               placeholder: "Baggins",
-              value: lastName,
+              value: lastNameInput,
             }}
           />
         </div>
@@ -240,12 +148,9 @@ export class ClassForm extends Component<TProps, TState> {
           <ClassTextInput
             label="Email"
             inputProps={{
-              onChange: (e) => {
-                this.updateStateOnSingleInputs("email", e.target.value);
-                this.errorCheckInput("email", e.target.value);
-              },
+              onChange: singleInputHandler("emailInput"),
               placeholder: "bilbo@hobbiton-adventures.com",
-              value: email,
+              value: emailInput,
             }}
           />
         </div>
@@ -256,13 +161,10 @@ export class ClassForm extends Component<TProps, TState> {
           <ClassTextInput
             label="City"
             inputProps={{
-              onChange: (e) => {
-                this.updateStateOnSingleInputs("city", e.target.value);
-                this.errorCheckInput("city", e.target.value);
-              },
+              onChange: singleInputHandler("cityInput"),
               placeholder: "Hobbiton",
               list: "cities",
-              value: city,
+              value: cityInput,
             }}
           />
           <datalist id="cities">
@@ -276,8 +178,7 @@ export class ClassForm extends Component<TProps, TState> {
         <div className="input-wrap">
           <ClassPhoneInput
             phoneNumber={this.state.phoneNumber}
-            phoneNumberRefs={this.phoneNumberRefs}
-            onPhoneInputsHandler={this.onPhoneInputsHandler}
+            setPhoneInput={this.setPhoneInput}
           />
         </div>
         <ErrorMessage
