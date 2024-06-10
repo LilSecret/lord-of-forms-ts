@@ -42,9 +42,7 @@ export const FunctionalForm = ({ setUserInformation }: TFormProps) => {
   const singleInputHandler =
     (input: keyof typeof singleInputs): ChangeEventHandler<HTMLInputElement> =>
     (e) => {
-      const updatedObject = { ...singleInputs };
-      updatedObject[input] = e.target.value;
-      setSingleInputs(updatedObject);
+      setSingleInputs({ ...singleInputs, [input]: e.target.value });
     };
 
   const caughtError = () => {
