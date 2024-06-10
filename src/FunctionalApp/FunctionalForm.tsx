@@ -27,13 +27,17 @@ export const FunctionalForm = ({ setUserInformation }: TFormProps) => {
   const [phoneNumber, setPhoneNumber] = useState<TPhoneInput>(["", "", "", ""]);
   const [isFormSubmitted, setIsFormSubmitted] = useState(false);
 
+  const isPhoneNumberValid = () => {
+    return phoneNumber.join("").length != 7 && isFormSubmitted;
+  };
+
   const firstNameError =
     singleInputs.firstNameInput.length <= 1 && isFormSubmitted;
   const lastNameError =
     singleInputs.lastNameInput.length <= 1 && isFormSubmitted;
   const emailError = !isEmailValid(singleInputs.emailInput) && isFormSubmitted;
   const cityError = !isValidCity(singleInputs.cityInput) && isFormSubmitted;
-  const phoneNumberError = phoneNumber.join("").length != 7 && isFormSubmitted;
+  const phoneNumberError = isPhoneNumberValid();
 
   const singleInputHandler =
     (input: keyof typeof singleInputs): ChangeEventHandler<HTMLInputElement> =>
